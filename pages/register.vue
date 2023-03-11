@@ -1,30 +1,54 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "centered",
-});
+  import axios from 'axios'
+
+  definePageMeta({
+    layout: "centered",
+  });
+
+  interface RegisterPayload {
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string,
+  }
+
+  const form = ref({
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+  })
+
+  // const register = async (payload: RegisterPayload) => {
+  const register = async () => {
+    console.log(form.value);
+
+    // const res = await axios.post("http://localhost:84/api/register", payload)
+  }
 </script>
+
 <template>
   <div class="register">
     <h1>Register</h1>
-    <form>
+    <form @submit.prevent="register(form)">
       <label>
         <div>Name</div>
-        <input type="text" />
+        <input v-model="form.name" type="text" />
       </label>
 
       <label>
         <div>Email</div>
-        <input type="email" />
+        <input v-model="form.email" type="email" />
       </label>
 
       <label>
         <div>Password</div>
-        <input type="password" />
+        <input v-model="form.password" type="password" />
       </label>
 
       <label>
         <div>Confirm Password</div>
-        <input type="password" />
+        <input v-model="form.password_confirmation" type="password" />
       </label>
 
       <button class="btn">Register</button>
