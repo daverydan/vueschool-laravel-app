@@ -13,7 +13,7 @@
   })
 
   const register = async () => {
-    const res = await axios.post("/api/register", form.value)
+    const res = await axios.post("/register", form.value)
   }
 </script>
 
