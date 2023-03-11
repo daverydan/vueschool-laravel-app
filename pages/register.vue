@@ -5,13 +5,6 @@
     layout: "centered",
   });
 
-  interface RegisterPayload {
-    name: string,
-    email: string,
-    password: string,
-    password_confirmation: string,
-  }
-
   const form = ref({
     name: "",
     email: "",
@@ -19,18 +12,15 @@
     password_confirmation: "",
   })
 
-  // const register = async (payload: RegisterPayload) => {
   const register = async () => {
-    console.log(form.value);
-
-    // const res = await axios.post("http://localhost:84/api/register", payload)
+    const res = await axios.post("/api/register", form.value)
   }
 </script>
 
 <template>
   <div class="register">
     <h1>Register</h1>
-    <form @submit.prevent="register(form)">
+    <form @submit.prevent="register">
       <label>
         <div>Name</div>
         <input v-model="form.name" type="text" />
