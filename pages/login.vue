@@ -1,20 +1,32 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "centered",
-});
+import axios from "axios";
+
+  definePageMeta({
+    layout: "centered",
+  });
+
+  const form = ref({
+    email: "",
+    password: "",
+  })
+
+  const login = async () => {
+    await axios.post('/login', form);
+    useRouter().push('/me');
+  }
 </script>
 <template>
   <div class="login">
     <h1>Login</h1>
-    <form>
+    <form @submit.prevent="login">
       <label>
         <div>Email</div>
-        <input type="text" />
+        <input v-model="form.email" type="text" />
       </label>
 
       <label>
         <div>Password</div>
-        <input type="password" />
+        <input v-model="form.password" type="password" />
       </label>
       <button class="btn">Login</button>
     </form>
