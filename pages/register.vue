@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import axios from 'axios'
-
   definePageMeta({
     layout: "centered",
     middleware: ["guest"],
@@ -13,16 +11,13 @@
     password_confirmation: "",
   })
 
-  const register = async () => {
-    await axios.post("/register", form.value)
-    useRouter().push('/me');
-  }
+  const { register } = useAuth();
 </script>
 
 <template>
   <div class="register">
     <h1>Register</h1>
-    <form @submit.prevent="register">
+    <form @submit.prevent="register(form)">
       <label>
         <div>Name</div>
         <input v-model="form.name" type="text" />

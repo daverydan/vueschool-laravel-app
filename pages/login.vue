@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import axios from "axios";
-
   definePageMeta({
     layout: "centered",
     middleware: ["guest"],
   });
 
+  const { login } = useAuth();
+
   const form = ref({
     email: "",
     password: "",
   })
-
-  const login = async () => {
-    await axios.post('/login', form.value);
-    useRouter().push('/me');
-  }
 </script>
 <template>
   <div class="login">
     <h1>Login</h1>
-    <form @submit.prevent="login">
+    <form @submit.prevent="login(form)">
       <label>
         <div>Email</div>
         <input v-model="form.email" type="text" />
