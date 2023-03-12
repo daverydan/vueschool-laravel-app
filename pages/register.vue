@@ -13,7 +13,8 @@
   })
 
   const register = async () => {
-    const res = await axios.post("/register", form.value)
+    await axios.post("/register", form.value)
+    useRouter().push('/me');
   }
 </script>
 
