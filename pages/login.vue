@@ -11,7 +11,7 @@ import axios from "axios";
   })
 
   const login = async () => {
-    await axios.post('/login', form);
+    await axios.post('/login', form.value);
     useRouter().push('/me');
   }
 </script>
