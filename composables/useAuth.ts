@@ -1,21 +1,9 @@
 import axios from "axios";
-
-interface User {
-	created_at: Date;
-	email: string;
-	email_verified_at?: Date;
-	id: number;
-	name: string;
-	two_factor_confirmed_at?: Date;
-	two_factor_recovery_codes?: number;
-	two_factor_secret?: string;
-	updated_at: Date;
-}
+import type { User, LoginPayload, RegisterPayload } from '@/types'
 
 const user = ref<User | null>(null);
 
 export const useAuth = () => {
-	// User
 	async function getUser(): Promise<User | null> {
 		if (user.value) return user.value;
 		try {
@@ -34,34 +22,22 @@ export const useAuth = () => {
 			return null;
 		}
 	}
+
 	async function initUser() {
 		user.value = await getUser()
 	}
 
-	// Login
-	interface LoginPayload {
-		email: string,
-		password: string,
-	}
 	async function login(payload: LoginPayload) {
 		await axios.post('/login', payload);
 		useRouter().push('/me');
 	}
 
-	// Logout
 	async function logout() {
 		await axios.post('/logout')
 		user.value = null;
 		useRouter().replace('/login')
 	}
 
-	// Register
-	interface RegisterPayload {
-		name: "",
-		email: "",
-		password: "",
-		password_confirmation: "",
-	}
 	async function register(payload: RegisterPayload) {
 		await axios.post("/register", payload)
 		useRouter().push('/me');
