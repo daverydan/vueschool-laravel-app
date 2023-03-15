@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { AxiosError } from "axios";
+import { LoginPayload } from "@/types";
+import type { FormKitNode } from "@formkit/core";
 
   definePageMeta({
     layout: "centered",
@@ -8,52 +10,34 @@ import { AxiosError } from "axios";
 
   const { login } = useAuth();
 
-  const form = ref({
-    email: "",
-    password: "",
-  })
-
-  const errors = ref({
-    email: [],
-    password: [],
-  })
-
-  const handleLogin = async () => {
+  const handleLogin = async (payload: LoginPayload, node?: FormKitNode) => {
     try {
-      await login(form.value);
+      await login(payload);
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 422) {
-        errors.value = error.response.data.errors;
+        // 1. array of msgs for the entire form, 2. error msg for individual fields
+        node?.setErrors([], error.response.data.errors)
+      }
+      if (error instanceof AxiosError && error.response?.status === 429) {
+        node?.setErrors(['Too many login attempts. Please try again later.'], error.response.data.errors)
       }
     }
   }
 </script>
+
 <template>
   <div class="login">
     <h1>Login</h1>
-    <form @submit.prevent="handleLogin">
-      <label>
-        <div>Email</div>
-        <input v-model="form.email" type="text" />
-        <div v-for="error in errors.email" :key="error" class="text-red-600 p-1">
-          {{ error }}
-        </div>
-      </label>
-
-      <label>
-        <div>Password</div>
-        <input v-model="form.password" type="password" />
-        <div v-for="error in errors.password" :key="error" class="text-red-600 p-1">
-          {{ error }}
-        </div>
-      </label>
-      <button class="btn">Login</button>
-    </form>
+    <FormKit type="form" submit-label="Login" @submit="handleLogin">
+      <FormKit label="Email" name="email" type="email" />
+      <FormKit label="Password" name="password" type="password" />
+    </FormKit>
 
     <p>
       Don't have an account?
-      <NuxtLink class="underline text-lime-600" to="/register"
-        >Register now!</NuxtLink
+      <NuxtLink class="underline text-lime-600" to="/register">
+        Register now!
+      </NuxtLink
       >
     </p>
   </div>
