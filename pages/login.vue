@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { AxiosError } from "axios";
-import { LoginPayload } from "@/types";
-import type { FormKitNode } from "@formkit/core";
+  import type { FormKitNode } from "@formkit/core";
+  import type { LoginPayload } from "@/types";
 
   definePageMeta({
     layout: "centered",
@@ -14,13 +13,7 @@ import type { FormKitNode } from "@formkit/core";
     try {
       await login(payload);
     } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 422) {
-        // 1. array of msgs for the entire form, 2. error msg for individual fields
-        node?.setErrors([], error.response.data.errors)
-      }
-      if (error instanceof AxiosError && error.response?.status === 429) {
-        node?.setErrors(['Too many login attempts. Please try again later.'], error.response.data.errors)
-      }
+      handleInvalidForm(error, node);
     }
   }
 </script>
