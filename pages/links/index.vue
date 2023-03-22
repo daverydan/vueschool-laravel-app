@@ -1,13 +1,6 @@
 <script setup lang="ts">
-  import axios from "axios";
   import { TailwindPagination } from "laravel-vue-pagination";
-  import type { PaginatedResponse, Link } from "@/types";
 
-  definePageMeta({
-    middleware: ["auth"],
-  })
-
-  const data = ref<PaginatedResponse<Link> | null>(null);
   const queries = ref({
     page: 1,
     sort: "",
@@ -15,25 +8,20 @@
     ...useRoute().query,
   });
 
+  const { data, index: getLinks } = useLinks({ queries });
+
   await getLinks();
   let links = computed(() => data.value?.data);
 
-  watch(
-    queries,
-    async () => {
-      getLinks();
-      useRouter().push({ query: queries.value });
-    },
-    { deep: true }
-  );
+  watch(queries, () => useRouter().push({ query: queries.value }), {
+    deep: true,
+  });
 
-  async function getLinks() {
-    // @ts-expect-error page is number and that's ok
-    const qs = new URLSearchParams(queries.value).toString();
-    const { data: res } = await axios.get(`/links?${qs}`);
-    data.value = res;
-  }
+  definePageMeta({
+    middleware: ["auth"],
+  });
 </script>
+
 <template>
   <div>
     <nav class="flex justify-between mb-4 items-center">
@@ -62,15 +50,16 @@
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
             <th class="w-[6%] text-center">
-              <button @click="getLinks">
+              <button @click="getLinks()">
                 <IconRefresh class="w-[15px] relative top-[2px]" />
               </button>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="link in links">
-            <td>
+          
+          <tr v-for="link in links" :key="link.id">
+            <td :title="`created ${useTimeAgo(link.created_at).value}`">
               <a :href="link.full_link" target="_blank">
                 {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a
               >
